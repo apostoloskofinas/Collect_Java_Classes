@@ -18,21 +18,26 @@ public class Main {
                  .filter( m -> m.getName().startsWith("java.")) // filter the SE modules only
                  .forEach( m -> 
                 {            
-                Set<String> packages = m.getPackages();
-                Optional<ResolvedModule> resolved = bootConfig.findModule(m.getName());
-                resolved.ifPresent( rm -> 
+                    Set<String> packages = m.getPackages();
+                    Optional<ResolvedModule> resolved = bootConfig.findModule(m.getName());
+                    resolved.ifPresent( rm -> 
                     {                
                         ModuleReference ref = rm.reference();                
-                        System.out.println("Resolved module: " + rm.name() + " with " + packages.size() + " packages: " + String.join(", ", packages));
+                        System.out.println("Resolved module: " + rm.name() + " with " + packages.size() + 
+                                                 " packages: " + String.join(", ", packages));
                         totalModules.incrementAndGet();
-                        try (ModuleReader reader = ref.open()) {
-                            reader.list().forEach( s -> {
-                            
-                                try {
-                                    if (s.endsWith(".class") && !s.equals("module-info.class")) { // exclude non-class resources & the module-info class
+                        try (ModuleReader reader = ref.open()) 
+                        {
+                            reader.list().forEach( s -> 
+                            {                            
+                                try 
+                                {
+                                    if (s.endsWith(".class") && !s.equals("module-info.class")) 
+                                    { // exclude non-class resources & the module-info class
                                         String packageName = s.substring(0, s.lastIndexOf('/')).replace('/', '.');
                                         // System.out.println("package name: " + packageName);
-                                        if (m.isExported(packageName)) {
+                                        if (m.isExported(packageName)) 
+                                        {
                                             String className = s.replace('/', '.').substring(0, s.length() - ".class".length());                                    
                                             // System.out.println("m: " + m + " - n: " + s + " c: " + className);
                                             Class cl = Class.forName(className);
@@ -57,7 +62,7 @@ public class Main {
                         }                                
                     });
                 });
-        System.out.println("Done: " + totalModules.get() + " modules, " + totalClasses.get() + " classes");
-        
+        System.out.println("Done: " + totalModules.get() + " modules, " 
+                                    + totalClasses.get() + " classes");        
     }
 }
